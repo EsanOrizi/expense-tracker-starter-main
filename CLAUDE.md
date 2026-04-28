@@ -16,16 +16,22 @@ No test runner is configured.
 
 ## Architecture
 
-This is a single-page React app (Vite + React 19) with all logic in one file: `src/App.jsx`.
+This is a single-page React app (Vite + React 19) split across four components in `src/`:
 
-**State** lives entirely in `App` via `useState`:
-- `transactions` — array of `{ id, description, amount, type, category, date }`. `amount` is stored as a **string** (known bug — causes string concatenation instead of numeric addition in the summary calculations).
-- Form state: `description`, `amount`, `type`, `category`
-- Filter state: `filterType`, `filterCategory`
+| File | Responsibility |
+|---|---|
+| `App.jsx` | Root component. Owns `transactions` state and passes it down. |
+| `Summary.jsx` | Receives `transactions`, computes and displays `totalIncome`, `totalExpenses`, and `balance`. |
+| `TransactionForm.jsx` | Owns its own form state (`description`, `amount`, `type`, `category`). Calls `onAdd` prop with the new transaction object on submit. |
+| `TransactionList.jsx` | Receives `transactions`. Owns filter state (`filterType`, `filterCategory`) and applies filtering locally before rendering the table. |
+
+**State ownership:**
+- `transactions` — lives in `App`, array of `{ id, description, amount, type, category, date }`. `amount` is a number.
+- Form state — lives in `TransactionForm`.
+- Filter state — lives in `TransactionList`.
+
+**Data flow**: `App` passes `transactions` to `Summary` and `TransactionList`. `TransactionForm` receives an `onAdd` callback; `App` appends the new transaction to its state when called. No persistence — state resets on page reload.
 
 **Known intentional issues** (introduced for the course):
-- `amount` is never parsed to a number, so `totalIncome`, `totalExpenses`, and `balance` are computed via string concatenation.
 - "Freelance Work" in the seed data is typed as `"expense"` but categorized under `"salary"`.
 - UI and styling are intentionally rough.
-
-**Data flow**: no persistence — state resets on page reload. Filtering is done by chaining `.filter()` on the `transactions` array in the render body.
