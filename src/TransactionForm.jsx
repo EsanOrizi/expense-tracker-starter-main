@@ -11,12 +11,13 @@ function TransactionForm({ onAdd }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!description || !amount) return;
+    const parsed = parseFloat(amount);
+    if (!description.trim() || !parsed || parsed <= 0) return;
 
     onAdd({
       id: Date.now(),
-      description,
-      amount: parseFloat(amount),
+      description: description.trim(),
+      amount: parsed,
       type,
       category,
       date: new Date().toISOString().split('T')[0],
@@ -33,8 +34,9 @@ function TransactionForm({ onAdd }) {
       <h2>Add Transaction</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-field f-desc">
-          <label>Description</label>
+          <label htmlFor="tx-desc">Description</label>
           <input
+            id="tx-desc"
             type="text"
             placeholder="e.g. Coffee, Paycheck…"
             value={description}
@@ -43,11 +45,12 @@ function TransactionForm({ onAdd }) {
         </div>
 
         <div className="form-field f-amount">
-          <label>Amount</label>
+          <label htmlFor="tx-amount">Amount</label>
           <input
+            id="tx-amount"
             type="number"
             placeholder="0"
-            min="0"
+            min="0.01"
             step="0.01"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -56,7 +59,7 @@ function TransactionForm({ onAdd }) {
 
         <div className="form-field f-type">
           <label>Type</label>
-          <div className="type-toggle">
+          <div className="type-toggle" role="group" aria-label="Transaction type">
             <button
               type="button"
               className={type === 'income' ? 'active-income' : ''}
@@ -75,8 +78,8 @@ function TransactionForm({ onAdd }) {
         </div>
 
         <div className="form-field f-category">
-          <label>Category</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <label htmlFor="tx-category">Category</label>
+          <select id="tx-category" value={category} onChange={(e) => setCategory(e.target.value)}>
             {categories.map(cat => (
               <option key={cat} value={cat}>{capitalize(cat)}</option>
             ))}

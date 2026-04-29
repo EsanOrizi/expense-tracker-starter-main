@@ -69,7 +69,7 @@ function TransactionList({ transactions, onDelete }) {
                 </td>
                 <td>
                   <span className={`td-amount ${t.type}`}>
-                    {t.type === 'income' ? '+' : '−'}${t.amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                    {t.type === 'income' ? '+' : '−'}${t.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </td>
                 <td>
